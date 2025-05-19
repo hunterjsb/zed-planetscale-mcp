@@ -1,65 +1,49 @@
 # PlanetScale Context Server for Zed
 
-This extension provides a PlanetScale context server for the Zed editor, allowing the Zed AI assistant to run queries against PlanetScale databases.
+This extension integrates PlanetScale's built-in Model Context Protocol (MCP) server with Zed editor, allowing the Zed AI assistant to run queries against PlanetScale databases.
 
-## Structure
+## Prerequisites
 
-The extension consists of two main components:
-
-1. The Zed extension (`planetscale/`) - This is the extension that integrates with Zed
-2. The context server executable (`planetscale-context-server/`) - This is the executable that implements the Model Context Protocol for PlanetScale
+- [PlanetScale CLI](https://github.com/planetscale/cli) installed and configured
+- Zed editor
 
 ## Installation
 
-### Prerequisites
+### Installing PlanetScale CLI
 
-- Rust installed via `rustup`
-- Zed editor
-- PlanetScale CLI installed and configured
+Make sure you have the PlanetScale CLI installed and available in your PATH:
 
-### Building the Extension
+```bash
+# macOS (with Homebrew)
+brew install planetscale/tap/pscale
 
-Run the provided installation script:
+# Linux (using .deb package)
+curl -L https://github.com/planetscale/cli/releases/download/v0.147.0/pscale_0.147.0_linux_amd64.deb -o pscale.deb
+sudo dpkg -i pscale.deb
 
+# Linux (using .rpm package)
+curl -L https://github.com/planetscale/cli/releases/download/v0.147.0/pscale_0.147.0_linux_amd64.rpm -o pscale.rpm
+sudo rpm -i pscale.rpm
+
+# Windows (with Scoop)
+scoop bucket add pscale https://github.com/planetscale/scoop-bucket.git
+scoop install pscale
+```
+
+### Installing the Extension
+
+1. Clone this repository:
+```bash
+git clone https://github.com/hunterjsb/zed-planetscale-mcp.git
+cd zed-planetscale-mcp
+```
+
+2. Build and install the extension:
 ```bash
 ./test.sh
 ```
 
-This will:
-1. Add the WASM target to Rust
-2. Build the context server executable
-3. Build the Zed extension
-4. Copy the extension and context server to the proper Zed directories
-
-### Manual Installation
-
-If you prefer to install manually:
-
-1. Build the context server executable:
-```bash
-cd planetscale-context-server
-cargo build --release
-```
-
-2. Build the Zed extension:
-```bash
-cd ../planetscale
-rustup target add wasm32-unknown-unknown
-cargo build --release --target wasm32-unknown-unknown
-```
-
-3. Copy the extension files to Zed:
-```bash
-mkdir -p ~/.config/zed/extensions/dev/planetscale
-cp extension.toml ~/.config/zed/extensions/dev/planetscale/
-cp target/wasm32-unknown-unknown/release/*.wasm ~/.config/zed/extensions/dev/planetscale/
-cp ../planetscale-context-server/target/release/planetscale-context-server ~/.config/zed/extensions/dev/
-```
-
-### Configuration
-
-In your Zed settings.json, add:
-
+3. Configure Zed to use the extension by adding the following to your settings.json:
 ```json
 {
   "context_servers": {
@@ -72,13 +56,20 @@ In your Zed settings.json, add:
 }
 ```
 
+4. Restart Zed for the changes to take effect.
+
 ## Usage
 
-Once installed, you can use the `/ps` slash command in Zed to run PlanetScale database operations.
+Once installed, you can use PlanetScale-related commands in Zed's AI assistant. The exact commands available will depend on what the PlanetScale MCP server supports, but typically include:
 
-## Development
+- Listing databases
+- Listing branches
+- Getting database schemas
+- Running queries
 
-This extension is written in Rust and follows the Zed extension model for context servers. It uses the Model Context Protocol (MCP) to communicate with the PlanetScale API.
+## How it Works
+
+This extension leverages the built-in MCP server in the PlanetScale CLI by running `pscale mcp server` and connecting it to Zed's context server system. The MCP server provides functionality for interacting with PlanetScale databases, and Zed's AI assistant can use this to execute commands on your behalf.
 
 ## License
 

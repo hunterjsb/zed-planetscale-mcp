@@ -1,4 +1,5 @@
 use zed_extension_api as zed;
+use std::collections::HashMap;
 
 struct PlanetScaleExtension;
 
@@ -17,20 +18,16 @@ impl zed::Extension for PlanetScaleExtension {
             return Err(format!("Unknown context server: {}", context_server_id.as_ref()));
         }
         
-        // Get path to our context server executable
-        let executable_path = match std::env::current_exe() {
-            Ok(path) => {
-                match path.parent() {
-                    Some(parent) => parent.join("planetscale-context-server"),
-                    None => return Err("Failed to get parent directory".to_string())
-                }
-            },
-            Err(e) => return Err(e.to_string())
-        };
+        // Use the PlanetScale CLI's built-in MCP server
+        // The command is: pscale mcp server
+        let mut env = HashMap::new();
+        
+        // Add any necessary environment variables
+        // env.insert("PS_VAR".to_string(), "value".to_string());
         
         Ok(zed_extension_api::process::Command {
-            command: executable_path.to_string_lossy().to_string(),
-            args: vec![],
+            command: "pscale".to_string(),
+            args: vec!["mcp".to_string(), "server".to_string()],
             env: vec![],
         })
     }

@@ -175,21 +175,14 @@ fn main() -> Result<()> {
     // Initialize the service
     let service = PlanetScaleService::new();
 
-    // Define slash commands
-    let slash_commands = vec![
-        SlashCommand {
-            name: "ps-list-dbs".to_string(),
-            description: "List all PlanetScale databases".to_string(),
-        },
-        SlashCommand {
-            name: "ps-schema".to_string(),
-            description: "Get schema for a PlanetScale database".to_string(),
-        },
-        SlashCommand {
-            name: "ps-query".to_string(),
-            description: "Run a query against a PlanetScale database".to_string(),
-        },
-    ];
+    // Define slash commands - this format is specifically for the Zed MCP protocol
+    let slash_commands = serde_json::json!([
+        {
+            "name": "ps",
+            "description": "PlanetScale database operations",
+            "documentation": "Run operations against PlanetScale databases"
+        }
+    ]);
 
     // Define available tools
     let tools = vec![

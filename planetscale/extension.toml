@@ -2,8 +2,8 @@ id = "planetscale"
 name = "PlanetScale"
 version = "0.1.0"
 schema_version = 1
-authors = ["User"]
+authors = ["Hunter Satterwhite <hunter@satterwhite.dev>"]
 description = "PlanetScale context server for Zed"
-repository = "TBD"
+repository = "https://github.com/hunterjsb/zed-planetscale-mcp"
 
 [context_servers.planetscale]
