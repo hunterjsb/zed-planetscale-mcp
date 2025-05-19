@@ -1,0 +1,9 @@
+id = "planetscale"
+name = "PlanetScale"
+version = "0.1.0"
+schema_version = 1
+authors = ["User"]
+description = "PlanetScale context server for Zed"
+repository = "TBD"
+
+[context_servers.planetscale]
