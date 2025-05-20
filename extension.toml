@@ -5,3 +5,7 @@ schema_version = 1
 authors = ["Hunter Boyd <hunterjsb@gmail.com>"]
 description = "Model Context Server for interatcting with databases on PlanetScale."
 repository = "https://github.com/hunterjsb/zed-planetscale-mcp"
+
+[slash_commands.hello]
+description       = "Prints “Hello, world!”"
+requires_argument = false

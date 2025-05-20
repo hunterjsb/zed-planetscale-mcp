@@ -16,6 +16,8 @@ Thumbs.db
 # agents
 .claude/
 
+# builds
+*.wasm
 
 # Added by cargo
 
