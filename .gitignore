@@ -15,3 +15,8 @@ Thumbs.db
 
 # agents
 .claude/
+
+
+# Added by cargo
+
+/target
