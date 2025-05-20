@@ -1,2 +1,0 @@
-cargo:rerun-if-changed=build.rs
-cargo:rustc-env=DEBUG_OUTPUT_DIR=/home/hunter/Desktop/zed-ext/planetscale/target/release/build/wit-bindgen-rust-macro-7b1e7d5934f42a46/out
