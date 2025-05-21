@@ -10,6 +10,6 @@ repository = "https://github.com/hunterjsb/zed-planetscale-mcp"
 description       = "Prints 'Hello, world!'"
 requires_argument = false
 
-[context_servers.mini_mcp]
+[context_servers.mini-mcp]
 name = "Mini MCP"
 description = "Mini Model Context Protocol server with simple tools"
