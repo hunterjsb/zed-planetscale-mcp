@@ -32,10 +32,12 @@ impl zed::Extension for PlanetscaleContextServerExtension {
         _project: &zed::Project,
     ) -> Result<zed::Command, String> {
         match context_server_id.as_ref() {
-            "mini_mcp" => {
+            // Use the context server ID as defined in extension.toml: "mini-mcp"
+            "mini-mcp" => {
                 Ok(zed::Command {
                     command: "python3".to_string(),
-                    args: vec!["/home/hunter/Desktop/mini-mcp/server.py".to_string()],
+                    // Launch the mini-mcp server script from the project workspace
+                    args: vec!["mini-mcp/server.py".to_string()],
                     env: vec![],
                 })
             },
