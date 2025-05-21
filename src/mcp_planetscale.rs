@@ -24,6 +24,24 @@ impl zed::Extension for PlanetscaleContextServerExtension {
             other => Err(format!("unknown slash command: {other}")),
         }
     }
+    
+    /// Configure the mini_mcp context server
+    fn context_server_command(
+        &mut self,
+        context_server_id: &zed::ContextServerId,
+        _project: &zed::Project,
+    ) -> Result<zed::Command, String> {
+        match context_server_id.as_ref() {
+            "mini_mcp" => {
+                Ok(zed::Command {
+                    command: "python3".to_string(),
+                    args: vec!["/home/hunter/Desktop/mini-mcp/server.py".to_string()],
+                    env: vec![],
+                })
+            },
+            _ => Err(format!("unknown context server: {context_server_id}")),
+        }
+    }
 }
 
 zed::register_extension!(PlanetscaleContextServerExtension);

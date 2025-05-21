@@ -7,5 +7,9 @@ description = "Model Context Server for interatcting with databases on PlanetSca
 repository = "https://github.com/hunterjsb/zed-planetscale-mcp"
 
 [slash_commands.hello]
-description       = "Prints “Hello, world!”"
+description       = "Prints 'Hello, world!'"
 requires_argument = false
+
+[context_servers.mini_mcp]
+name = "Mini MCP"
+description = "Mini Model Context Protocol server with simple tools"
