@@ -1,6 +1,6 @@
 # PlanetScale Context Server for Zed
 
-This extension integrates PlanetScale's built-in Model Context Protocol (MCP) server with Zed editor, allowing the Zed AI assistant to run queries against PlanetScale databases.
+This extension integrates PlanetScale's built-in Model Context Protocol (MCP) server with Zed editor, allowing the Zed AI assistant to interact with your PlanetScale instance.
 
 ## Prerequisites
 
