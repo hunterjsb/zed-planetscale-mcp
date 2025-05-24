@@ -43,7 +43,7 @@ impl PlanetScaleModelContextExtension {
         let (platform, arch) = zed::current_platform();
         let asset_name = format!(
             "{BINARY_NAME}_{version}_{os}_{arch}.tar.gz",
-            version = release.version,
+            version = release.version.trim_start_matches('v'),
             arch = match arch {
                 zed::Architecture::Aarch64 => "arm64",
                 zed::Architecture::X86 => "386",
