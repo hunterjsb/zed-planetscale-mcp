@@ -1,5 +1,6 @@
 use schemars::JsonSchema;
 use serde::Deserialize;
+use std::process;
 use zed::settings::ContextServerSettings;
 use zed_extension_api::{
     self as zed, Command, ContextServerConfiguration, ContextServerId, Project, Result, serde_json,
@@ -25,6 +26,17 @@ impl zed::Extension for PlanetScaleModelContextExtension {
         _context_server_id: &ContextServerId,
         project: &Project,
     ) -> Result<Command> {
+        // Check if pscale is installed
+        if let Err(_) = process::Command::new("pscale").arg("--version").output() {
+            return Err("PlanetScale CLI not found. Install: brew install planetscale/tap/pscale (macOS) or see https://planetscale.com/cli".into());
+        }
+
+        // Check if user is authenticated
+        if let Ok(output) = process::Command::new("pscale").args(&["auth", "check"]).output() {
+            if !output.status.success() {
+                return Err("Not authenticated. Run: pscale auth login".into());
+            }
+        }
         let settings = ContextServerSettings::for_project("planetscale-context-server", project)?;
         let settings: PlanetScaleContextServerSettings = if let Some(settings) = settings.settings {
             serde_json::from_value(settings).map_err(|e| e.to_string())?
@@ -68,10 +80,13 @@ impl zed::Extension for PlanetScaleModelContextExtension {
         _context_server_id: &ContextServerId,
         _project: &Project,
     ) -> Result<Option<ContextServerConfiguration>> {
-        let installation_instructions = r#"
-### Prerequisites
-1. Install the PlanetScale CLI: https://planetscale.com/cli
-2. Authenticate with PlanetScale: `pscale auth login`
+        let installation_instructions = r#"# PlanetScale MCP Server
+
+Provides database access through the Model Context Protocol.
+
+## Setup
+1. Install PlanetScale CLI: `brew install planetscale/tap/pscale` (macOS) or see https://planetscale.com/cli
+2. Authenticate: `pscale auth login`
 "#
         .to_string();
 
