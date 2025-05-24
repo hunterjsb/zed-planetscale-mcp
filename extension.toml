@@ -6,10 +6,6 @@ authors = ["Hunter Boyd <hunterjsb@gmail.com>"]
 description = "Model Context Server for interacting with databases on PlanetScale."
 repository = "https://github.com/hunterjsb/zed-planetscale-mcp"
 
-[slash_commands.hello]
-description = "Hello from PlanetScale MCP"
-requires_argument = false
-
 [context_servers.planetscale-context-server]
 name = "PlanetScale Context Server"
 description = "PlanetScale Model Context Protocol server for database operations"

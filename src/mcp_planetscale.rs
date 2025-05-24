@@ -98,21 +98,6 @@ impl zed::Extension for PlanetScaleModelContextExtension {
             settings_schema,
         }))
     }
-
-    fn run_slash_command(
-        &self,
-        command: zed::SlashCommand,
-        _args: Vec<String>,
-        _worktree: Option<&zed::Worktree>,
-    ) -> Result<zed::SlashCommandOutput> {
-        match command.name.as_str() {
-            "hello" => Ok(zed::SlashCommandOutput {
-                text: "Hello from PlanetScale MCP! 🚀".to_string(),
-                sections: vec![],
-            }),
-            other => Err(format!("unknown slash command: {other}")),
-        }
-    }
 }
 
 zed::register_extension!(PlanetScaleModelContextExtension);
