@@ -2,7 +2,7 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 use zed::settings::ContextServerSettings;
 use zed_extension_api::{
-    self as zed, serde_json, Command, ContextServerConfiguration, ContextServerId, Project, Result,
+    self as zed, Command, ContextServerConfiguration, ContextServerId, Project, Result, serde_json,
 };
 
 struct PlanetScaleModelContextExtension;
@@ -36,7 +36,7 @@ impl zed::Extension for PlanetScaleModelContextExtension {
         };
 
         let mut env_vars = vec![];
-        
+
         // Ensure environment variables are available for pscale config
         if let Ok(home) = std::env::var("HOME") {
             env_vars.push(("HOME".to_string(), home));
@@ -68,51 +68,28 @@ impl zed::Extension for PlanetScaleModelContextExtension {
         _context_server_id: &ContextServerId,
         _project: &Project,
     ) -> Result<Option<ContextServerConfiguration>> {
-        let installation_instructions = r#"# PlanetScale MCP Server
-
-This context server provides PlanetScale database management capabilities through the Model Context Protocol.
-
-## Prerequisites
-
+        let installation_instructions = r#"# This context server provides PlanetScale database management capabilities through the Model Context Protocol.
+### Prerequisites
 1. Install the PlanetScale CLI: https://planetscale.com/cli
 2. Authenticate with PlanetScale: `pscale auth login`
-
-## Configuration
-
-Add this to your Zed settings.json:
-
-```json
-{
-  "context_servers": {
-    "planetscale-context-server": {
-      "settings": {
-        "organization": "your-org-name",
-        "database": "your-database-name"
-      }
-    }
-  }
-}
-```
-
-Both organization and database are optional. If not specified, you'll be able to select from available options when using the tools.
 "#.to_string();
 
         let default_settings = r#"{
   "context_servers": {
     "planetscale-context-server": {
       "settings": {
-        // Optional: Set a default organization
+        // optional params:
         // "organization": "your-org-name",
-        
-        // Optional: Set a default database
         // "database": "your-database-name"
       }
     }
   }
-}"#.to_string();
+}"#
+        .to_string();
 
-        let settings_schema = serde_json::to_string(&schemars::schema_for!(PlanetScaleContextServerSettings))
-            .map_err(|e| e.to_string())?;
+        let settings_schema =
+            serde_json::to_string(&schemars::schema_for!(PlanetScaleContextServerSettings))
+                .map_err(|e| e.to_string())?;
 
         Ok(Some(ContextServerConfiguration {
             installation_instructions,
