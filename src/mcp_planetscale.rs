@@ -1,49 +1,140 @@
-use zed_extension_api as zed;
+use schemars::JsonSchema;
+use serde::Deserialize;
+use zed::settings::ContextServerSettings;
+use zed_extension_api::{
+    self as zed, serde_json, Command, ContextServerConfiguration, ContextServerId, Project, Result,
+};
 
-/// A stateless hello-world extension.
-struct PlanetscaleContextServerExtension;
+struct PlanetScaleModelContextExtension;
 
-impl zed::Extension for PlanetscaleContextServerExtension {
-    /// Mandatory constructor.
+#[derive(Debug, Deserialize, JsonSchema)]
+struct PlanetScaleContextServerSettings {
+    #[serde(default)]
+    organization: Option<String>,
+    #[serde(default)]
+    database: Option<String>,
+}
+
+impl zed::Extension for PlanetScaleModelContextExtension {
     fn new() -> Self {
-        PlanetscaleContextServerExtension
+        Self
     }
 
-    /// Handle `/hello`.
+    fn context_server_command(
+        &mut self,
+        _context_server_id: &ContextServerId,
+        project: &Project,
+    ) -> Result<Command> {
+        let settings = ContextServerSettings::for_project("planetscale-context-server", project)?;
+        let settings: PlanetScaleContextServerSettings = if let Some(settings) = settings.settings {
+            serde_json::from_value(settings).map_err(|e| e.to_string())?
+        } else {
+            PlanetScaleContextServerSettings {
+                organization: None,
+                database: None,
+            }
+        };
+
+        let mut env_vars = vec![];
+        
+        // Ensure environment variables are available for pscale config
+        if let Ok(home) = std::env::var("HOME") {
+            env_vars.push(("HOME".to_string(), home));
+        }
+        if let Ok(path) = std::env::var("PATH") {
+            env_vars.push(("PATH".to_string(), path));
+        }
+        if let Ok(xdg_config) = std::env::var("XDG_CONFIG_HOME") {
+            env_vars.push(("XDG_CONFIG_HOME".to_string(), xdg_config));
+        }
+
+        // Add optional organization and database as environment variables
+        if let Some(org) = &settings.organization {
+            env_vars.push(("PLANETSCALE_ORG".to_string(), org.clone()));
+        }
+        if let Some(db) = &settings.database {
+            env_vars.push(("PLANETSCALE_DATABASE".to_string(), db.clone()));
+        }
+
+        Ok(Command {
+            command: "pscale".to_string(),
+            args: vec!["mcp".to_string(), "server".to_string()],
+            env: env_vars,
+        })
+    }
+
+    fn context_server_configuration(
+        &mut self,
+        _context_server_id: &ContextServerId,
+        _project: &Project,
+    ) -> Result<Option<ContextServerConfiguration>> {
+        let installation_instructions = r#"# PlanetScale MCP Server
+
+This context server provides PlanetScale database management capabilities through the Model Context Protocol.
+
+## Prerequisites
+
+1. Install the PlanetScale CLI: https://planetscale.com/cli
+2. Authenticate with PlanetScale: `pscale auth login`
+
+## Configuration
+
+Add this to your Zed settings.json:
+
+```json
+{
+  "context_servers": {
+    "planetscale-context-server": {
+      "settings": {
+        "organization": "your-org-name",
+        "database": "your-database-name"
+      }
+    }
+  }
+}
+```
+
+Both organization and database are optional. If not specified, you'll be able to select from available options when using the tools.
+"#.to_string();
+
+        let default_settings = r#"{
+  "context_servers": {
+    "planetscale-context-server": {
+      "settings": {
+        // Optional: Set a default organization
+        // "organization": "your-org-name",
+        
+        // Optional: Set a default database
+        // "database": "your-database-name"
+      }
+    }
+  }
+}"#.to_string();
+
+        let settings_schema = serde_json::to_string(&schemars::schema_for!(PlanetScaleContextServerSettings))
+            .map_err(|e| e.to_string())?;
+
+        Ok(Some(ContextServerConfiguration {
+            installation_instructions,
+            default_settings,
+            settings_schema,
+        }))
+    }
+
     fn run_slash_command(
         &self,
         command: zed::SlashCommand,
         _args: Vec<String>,
         _worktree: Option<&zed::Worktree>,
-    ) -> Result<zed::SlashCommandOutput, String> {
+    ) -> Result<zed::SlashCommandOutput> {
         match command.name.as_str() {
             "hello" => Ok(zed::SlashCommandOutput {
-                text: "Hello, world!".into(),
+                text: "Hello from PlanetScale MCP! 🚀".to_string(),
                 sections: vec![],
             }),
             other => Err(format!("unknown slash command: {other}")),
         }
     }
-    
-    /// Configure the mini_mcp context server
-    fn context_server_command(
-        &mut self,
-        context_server_id: &zed::ContextServerId,
-        _project: &zed::Project,
-    ) -> Result<zed::Command, String> {
-        match context_server_id.as_ref() {
-            // Use the context server ID as defined in extension.toml: "mini-mcp"
-            "mini-mcp" => {
-                Ok(zed::Command {
-                    command: "python3".to_string(),
-                    // Launch the mini-mcp server script from the project workspace
-                    args: vec!["mini-mcp/server.py".to_string()],
-                    env: vec![],
-                })
-            },
-            _ => Err(format!("unknown context server: {context_server_id}")),
-        }
-    }
 }
 
-zed::register_extension!(PlanetscaleContextServerExtension);
+zed::register_extension!(PlanetScaleModelContextExtension);

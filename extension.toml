@@ -1,15 +1,15 @@
 id = "mcp-planetscale"
 name = "PlanetScale MCP"
-version = "0.0.1"
+version = "0.4.0"
 schema_version = 1
 authors = ["Hunter Boyd <hunterjsb@gmail.com>"]
-description = "Model Context Server for interatcting with databases on PlanetScale."
+description = "Model Context Server for interacting with databases on PlanetScale."
 repository = "https://github.com/hunterjsb/zed-planetscale-mcp"
 
 [slash_commands.hello]
-description       = "Prints 'Hello, world!'"
+description = "Hello from PlanetScale MCP"
 requires_argument = false
 
-[context_servers.mini-mcp]
-name = "Mini MCP"
-description = "Mini Model Context Protocol server with simple tools"
+[context_servers.planetscale-context-server]
+name = "PlanetScale Context Server"
+description = "PlanetScale Model Context Protocol server for database operations"
