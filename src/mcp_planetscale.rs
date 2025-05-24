@@ -50,7 +50,7 @@ impl PlanetScaleModelContextExtension {
                 zed::Architecture::X8664 => "amd64",
             },
             os = match platform {
-                zed::Os::Mac => "darwin",
+                zed::Os::Mac => "macOS",
                 zed::Os::Linux => "linux",
                 zed::Os::Windows => return Err("Windows is not supported".into()),
             },
