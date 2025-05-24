@@ -1,6 +1,6 @@
 id = "mcp-planetscale"
 name = "PlanetScale MCP"
-version = "0.4.0"
+version = "0.4.1"
 schema_version = 1
 authors = ["Hunter Boyd <hunterjsb@gmail.com>"]
 description = "Model Context Server for interacting with databases on PlanetScale."
