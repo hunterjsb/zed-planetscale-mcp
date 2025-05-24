@@ -68,11 +68,12 @@ impl zed::Extension for PlanetScaleModelContextExtension {
         _context_server_id: &ContextServerId,
         _project: &Project,
     ) -> Result<Option<ContextServerConfiguration>> {
-        let installation_instructions = r#"# This context server provides PlanetScale database management capabilities through the Model Context Protocol.
+        let installation_instructions = r#"
 ### Prerequisites
 1. Install the PlanetScale CLI: https://planetscale.com/cli
 2. Authenticate with PlanetScale: `pscale auth login`
-"#.to_string();
+"#
+        .to_string();
 
         let default_settings = r#"{
   "context_servers": {
